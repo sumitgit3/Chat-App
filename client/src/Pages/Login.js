@@ -16,6 +16,7 @@ const Login = () => {
   useEffect(()=>{
     if(localStorage.getItem("chat-app-user"))
       navigate('/');
+    // eslint-disable-next-line
   },[]);
   const toastObject ={
     position:"bottom-right",
@@ -26,7 +27,7 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if(handleValidation()) {
-      const {username,password,email} = values;
+      const {username,password} = values;
       const {data} = await axios.post(loginRoute,{
         username,
         password

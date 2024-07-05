@@ -18,6 +18,7 @@ const Register = () => {
   useEffect(()=>{
     if(localStorage.getItem("chat-app-user"))
       navigate('/');
+    // eslint-disable-next-line
   },[]);
   const toastObject ={
     position:"bottom-right",
