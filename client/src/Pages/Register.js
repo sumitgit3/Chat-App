@@ -1,6 +1,6 @@
-import {React,useState} from 'react'
+import {React,useState,useEffect} from 'react'
 import styled from 'styled-components'
-import {Link} from 'react-router-dom';
+import {Link,useNavigate} from 'react-router-dom';
 import  Heyicon from '../assets/Heyicon.svg'
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,6 +14,11 @@ const Register = () => {
     password: "",
     confirmpassword : ""
   });
+  const navigate = useNavigate();
+  useEffect(()=>{
+    if(localStorage.getItem("chat-app-user"))
+      navigate('/');
+  },[]);
   const toastObject ={
     position:"bottom-right",
     autoClose:8000,
@@ -29,6 +34,14 @@ const Register = () => {
         email,
         password
       });
+      if (data.status === false) {
+        toast.error(data.msg,toastObject);
+        return false;
+      }
+      if(data.status === true) {
+        localStorage.setItem('chat-app-user',JSON.stringify(data.responseUser));
+        navigate('/');
+      }
     }
   }
   const handleOnChange = (event) =>{
