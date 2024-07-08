@@ -1,5 +1,5 @@
 import express from 'express'
-import  {register,login,setavatar}  from '../controllers/userController.js';
+import  {register,login,setavatar,getalluser}  from '../controllers/userController.js';
 
 const router = express.Router();
 
@@ -11,5 +11,8 @@ router.post('/login',login);
 
 //Route 3:Set Avatar Route /api/auth/setavatar/:id
 router.post('/setavatar/:id',setavatar);
+
+//Route 4:Get allUser detail /api/auth/getalluser/:id
+router.get('/getalluser/:id',getalluser);
 
 export default router;

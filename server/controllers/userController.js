@@ -81,4 +81,20 @@ const setavatar = async (req,res,next)=> {
         next(error);
     }
 }
-export { register,login,setavatar };
+//getalluser controller
+const getalluser = async (req,res,next)=>{
+    try {
+        const userId = req.params.id;
+        const users = await User.find({ _id: { $ne: req.params.id } }).select([
+            "email",
+            "username",
+            "avatarImage",
+            "_id",
+          ]);
+        res.json(users);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export { register,login,setavatar,getalluser };
