@@ -79,7 +79,7 @@ const setavatar = async (req, res, next) => {
             avatarImage: image
         }
         const user = await User.findByIdAndUpdate(req.params.id, { $set: newUser }, { new: true });4
-        const { password:discardedPassword, ...userDetails } = user;
+        const { password:discardedPassword, ...userDetails } = user.toObject();
         return res.json({user:userDetails, status: true });
 
     } catch (error) {
