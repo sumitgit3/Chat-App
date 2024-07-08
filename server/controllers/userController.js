@@ -1,6 +1,6 @@
 import User from '../models/userModel.js'
 import bcrypt from 'bcrypt'
-
+import jwt from 'jsonwebtoken'
 //Register Controller
 const register = async (req, res, next) => {
     try {
@@ -19,8 +19,14 @@ const register = async (req, res, next) => {
             email,
             password: hashedPassword
         });
-        const responseUser = {username,email};
-        return res.json({ responseUser, status: true });
+        const signatureKey = process.env.AUTH_SECRET_KEY;
+        const payload = { id: user._id };
+        const authToken = jwt.sign(
+            payload, 
+            signatureKey
+            // { expiresIn: '1h' } //token expire in 1h
+        );
+        return res.json({ token:authToken,id:user._id ,status: true });
     } 
     catch (error) {
         next(error);
@@ -39,12 +45,40 @@ const login = async (req, res, next) => {
         if (!isPasswordValid) {
             return res.json({ msg: "Please try again with correct credentials", status: false });
         }
-        const email = userExist.email;
-        const responseUser = {username,email};
-        return res.json({ responseUser, status: true });
+        //create a JWT Token
+        const signatureKey = process.env.AUTH_SECRET_KEY;
+        const payload = { id: userExist._id };
+        const authToken = jwt.sign(
+            payload, 
+            signatureKey
+            // { expiresIn: '1h' } //token expire in 1h
+        );
+        return res.json({ token:authToken,id:userExist._id ,status: true });
     } 
     catch (error) {
         next(error);
     }
 }
-export { register,login };
+
+//setavatar controller
+
+const setavatar = async (req,res,next)=> {
+    try {
+        //find if user exist
+        const userExists = await User.findById(req.params.id);
+        if(!userExists) {
+            return res.json({msg:"User not found",status:false});
+        }
+        const {image} = req.body;
+        const newUser = {
+            isAvatarImageSet:true,
+            avatarImage:image
+        }
+        const user = await User.findByIdAndUpdate(req.params.id, { $set: newUser}, { new: true });
+        res.json({msg:"Avatar set",status:true});
+
+    } catch (error) {
+        next(error);
+    }
+}
+export { register,login,setavatar };
