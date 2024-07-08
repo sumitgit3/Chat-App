@@ -41,7 +41,7 @@ const Register = () => {
       }
       if(data.status === true) {
         localStorage.setItem('authToken',data.token);
-        localStorage.setItem('userId',data.id);
+        localStorage.setItem('user',JSON.stringify(data.user));
         navigate('/');
       }
     }
