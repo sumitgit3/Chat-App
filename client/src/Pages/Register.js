@@ -16,7 +16,7 @@ const Register = () => {
   });
   const navigate = useNavigate();
   useEffect(()=>{
-    if(localStorage.getItem("chat-app-user"))
+    if(localStorage.getItem("authToken"))
       navigate('/');
     // eslint-disable-next-line
   },[]);
@@ -40,7 +40,8 @@ const Register = () => {
         return false;
       }
       if(data.status === true) {
-        localStorage.setItem('chat-app-user',JSON.stringify(data.responseUser));
+        localStorage.setItem('authToken',data.token);
+        localStorage.setItem('userId',data.id);
         navigate('/');
       }
     }
