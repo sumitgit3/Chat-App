@@ -3,7 +3,7 @@ import cors from "cors"
 import {connect} from 'mongoose'
 import dotenv from 'dotenv';
 import authRouter from './routes/auth.js'
-
+import messageRouter from './routes/message.js'
 dotenv.config();
 const app = express();
 const port = process.env.PORT;
@@ -17,6 +17,7 @@ app.use(cors());
 
 //routes
 app.use('/api/auth',authRouter);
+app.use('/api/message',messageRouter);
 
 //server listening
 app.listen(port,()=>{
