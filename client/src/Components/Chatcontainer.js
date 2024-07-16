@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import Logout from './Logout'
 import Chatinput from './Chatinput'
 import { addMessageRoute, getAllMessageRoute } from '../Utils/APIroutes'
 import axios from 'axios'
-const Chatcontainer = ({ currentChat, currentUser }) => {
+const Chatcontainer = ({ currentChat, currentUser,socket }) => {
   const [messages, setMessages] = useState([]);
+  const [arrivalMessage,setArrivalMessage] = useState(null);
+  const scrollRef = useRef();
+
   useEffect(() => {
     const fetchMessages = async () => {
       const response = await axios.post(getAllMessageRoute, {
@@ -15,14 +18,38 @@ const Chatcontainer = ({ currentChat, currentUser }) => {
       setMessages(response.data);
     }
     fetchMessages();
-  }, [currentChat])
+    // eslint-disable-next-line
+  }, [currentChat]);
+
   const handleSendMessage = async (message) => {
+    socket.current.emit('send-msg',{
+      from:currentUser._id,
+      to:currentChat._id,
+      message
+    });
     await axios.post(addMessageRoute, {
       from: currentUser._id,
       to: currentChat._id,
       message
     });
+    const msg = [...messages];
+    msg.push({fromSelf:true,message});
+    setMessages(msg);
   }
+
+  useEffect(()=>{
+    if(socket.current) {
+      socket.current.on('message',(msg)=>{
+        setArrivalMessage({fromSelf:false,message:msg});
+      })
+      arrivalMessage && setMessages((prev)=>[...prev,arrivalMessage]);
+    }
+    // eslint-disable-next-line
+  },[arrivalMessage]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
   return (
     <>
       {currentChat && (
@@ -44,7 +71,7 @@ const Chatcontainer = ({ currentChat, currentUser }) => {
           <div className="chat-messages">
             {messages.map((msg) => {
               return (
-                <div className={`message ${msg.fromSelf ? 'sended' : 'recieved'}`}>
+                <div className={`message ${msg.fromSelf ? 'sended' : 'recieved'}` } ref={scrollRef}>
                   <div className="content">
                     <p>
                       {msg.message}
