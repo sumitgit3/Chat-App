@@ -2,7 +2,6 @@ import Message from "../models/messageModel.js";
 
 const addmessage = async (req,res,next)=>{
     try {
-        console.log("hello");
         const {from,to,message} = req.body;
         const response = await Message.create({
             message: {text:message},
